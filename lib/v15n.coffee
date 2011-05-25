@@ -1,4 +1,14 @@
-@v18n =
+_compact = (array) -> e for e in array when e
+_select = (array, f) -> e for e in array when f e
+_last = (array) -> array[array.length-1]
+_inject = (array, memo, iterator) ->
+  for e in array
+    memo = iterator.call array, memo, e
+  memo
+_keys = (obj) -> k for k of obj
+_isString = (obj) -> !!(obj is '' or (obj and obj.charCodeAt and obj.substr))
+
+@v15n =
   process: ->
     @setDefaultBounds() unless @tester?
     $('*:not(.v15n_processed):not(#v15n_panel)').each ->
@@ -13,7 +23,7 @@
   processElement: (element, text) ->
     text.replace @extractor, (match) ->
       keyCode = match.charCodeAt(0)
-      key = [$(element).attr('v15n_key')].compact().concat(keyCode).join('|')
+      key = _compact([$(element).attr('v15n_key')]).concat(keyCode).join('|')
       $(element).attr 'v15n_key', key
       match
   setKeys: (@keys) ->
@@ -42,7 +52,7 @@
             <a href="#">Reload</a> |
             <a href="#">Add...</a>
             <div style="float: right; display: none;">
-              <img src="/images/v15n_save.png" style="cursor: pointer; float: right"/>
+              <img src="/images/v15n_save.png"style="cursor: pointer; float: right"/>
               <input type="text" name="v15n_custom_key" id="v15n_custom_key" style="width:250px; float: right"/>
             </div>
             <div class="clear" />
@@ -65,7 +75,8 @@
           @loadCustom()
       @renderTranslations()
       @loadCustom()
-      @body.draggable handle: '.menu>h5'
+      @body.draggable handle: '.menu>h5' if $.fn.draggable
+      @body
     renderTranslations: ->
       $('.translations', @body).children().remove()
       @rendering[@renderingMethod].call v15n
@@ -75,7 +86,7 @@
         odd = not odd
         if odd then 'odd' else 'even'
       (key, index, canvas, full = true) ->
-        keyName = if full then key else key.split('.').last()
+        keyName = if full then key else _last(key.split('.'))
         row = $("<div index='#{index}' class='item #{cycle()}'><div class='key'>#{keyName}</div></div>").appendTo(canvas)
         $('<div style="float: right;"><img src="/images/v15n_save.png" style="cursor: pointer"/></div>').appendTo(row).click => @save index
         $("<input type='text' value='#{@values[index]}' style='float: right'/>").appendTo(row)
@@ -110,11 +121,10 @@
       tree: ->
         renderBlock = (obj, el) =>
           for key, value of obj
-            if _.isString value
-              #$("<div index='#{value}'>#{key}<input type='text' value='#{@values[value]}' style='float: right'/></div><div class='clear'/>").appendTo($('div:first', el))
+            if _isString value
               @panel.renderItem.call this, key, value, $('div:first', el), false
             else
-              block = $("<div><a href='#' style='font-weight: bold'>#{key}</a><div class='block' style='display: none; margin-left: 15px;'></div></div>").appendTo($('div:first', el))
+              block = $("<div><a href='#' style='font-weight: bold'>#{key}</a><div class='block' style='display: none; margin-left: 8px;'></div></div>").appendTo($('div:first', el))
               $('a', block).click ->
                 $(this).next().toggle()
                 return false
@@ -122,29 +132,29 @@
           return true
         sortObj = (obj) ->
           sorted = {}
-          keys = _.keys(obj).select((k) -> not _.isString(obj[k])).sort().concat _.keys(obj).select((k) -> _.isString(obj[k])).sort()
+          keys = _select(_keys(obj), (k) -> not _isString(obj[k])).sort().concat _select(_keys(obj), (k) -> _isString(obj[k])).sort()
           for key in keys
-            sorted[key] = if _.isString obj[key] then obj[key] else sortObj(obj[key])
+            sorted[key] = if _isString obj[key] then obj[key] else sortObj(obj[key])
           return sorted
         tree = {}
         for index, key of @keys
           parts = key.split('.')
-          obj = parts[0..parts.length-2].inject(tree, (obj, k) -> if obj[k] then obj[k] else obj[k] = {})
+          obj = _inject(parts[0..parts.length-2], tree, (obj, k) -> if obj[k] then obj[k] else obj[k] = {})
           obj[key] = index
         renderBlock sortObj(tree), $('.translations', @body).append('<div class="block"/>')
         return @panel
       custom: ->
         for key, value of @custom
-          row = $("<div><div style='float: left; width: 200px;'>#{key}</div></div>").appendTo($('.ctranslations', @panel.body))
+          row = $("<div><div style='float: left; width: 185px;'>#{key}</div></div>").appendTo($('.ctranslations', @panel.body))
           $('<div style="float: right;"><img src="/images/v15n_save.png" style="cursor: pointer"/></div>').appendTo(row).click => @saveCustom key, row
+          $('<div style="float: right;"><img src="/images/v15n_delete.png" style="cursor: pointer"/></div>').appendTo(row).click => @deleteCustom key, row
           $("<input type='text' value='#{value}' style='float: right'/>").appendTo(row)
           $('<div class="clear"/>').appendTo(row)
         return true
   save: (index) ->
     @values[index] = $("[index=#{index}] input").val()
-    value = if @values[index].length is 0 then @keys[index].split('.').last() else @values[index]
+    value = if @values[index].length is 0 then _last(@keys[index].split('.')) else @values[index]
     bchar = String.fromCharCode(index)
-    #$("[i18n_key*=#{index}").html($("[i18n_key*=#{index}").html().replace((new RegExp("#{bchar}.*?#{bchar}", 'g')), "#{bchar}#{value}#{bchar}"))
     $.post '/v15n/save', locale: @locale, key: @keys[index], value: @values[index], ->
       bchar = String.fromCharCode(index)
       $("[v15n_key*=#{index}]").each ->
@@ -152,6 +162,8 @@
   saveCustom: (key, row) ->
     value = $('input', row).val()
     $.post '/v15n/save', locale: @locale, key: key, value: value
+  deleteCustom: (key, row) ->
+    $.post '/v15n/custom_srem', page: @page, key: key, -> row.remove()
   test: (str) ->
     return false unless str
     @tester.test str

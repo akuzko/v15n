@@ -1,7 +1,8 @@
-#v18n_panel {
+#v15n_panel {
   background-color: #FFF;
   padding: 15px 15px 20px;
-  font-size: 1.10em;
+  font-size: 13px;
+  font-family: Arial, "MS Trebuchet", sans-serif;
   -moz-box-shadow: 0px 0px 5px #959595;
   -webkit-box-shadow: 0px 0px 5px #959595;
   box-shadow: 0px 0px 5px #959595;
@@ -18,7 +19,20 @@
   z-index: 300;
 }
 
-#v18n_panel h5 {
+#v15n_panel .clear {
+  clear: both;
+}
+
+#v15n_panel label {
+  font-weight: bold;
+}
+
+#v15n_panel img {
+  margin-top: 4px;
+}
+
+#v15n_panel h5 {
+  margin-top: 3px;
   cursor: pointer;
   padding: 8px 15px 6px;
   color: #FFF;
@@ -33,7 +47,7 @@
   padding-left: 20px;
 }
 
-#v18n_panel .control {
+#v15n_panel .control {
   padding: 8px 15px 6px;
   color: #FFF;
   background: #DEDEDE;
@@ -47,11 +61,11 @@
   padding-left: 20px;
 }
 
-#v18n_panel .control span {
+#v15n_panel .control span {
   font-weight: bold;
 }
 
-#v18n_panel .translations {
+#v15n_panel .translations {
   max-height:400px;
   overflow: auto;
   padding: 8px 0;
@@ -65,20 +79,20 @@
   box-shadow: 1px 1px 2px rgba(0,0,0,0.25);
 }
 
-#v18n_panel .translations .item {
+#v15n_panel .translations .item {
   min-height: 28px;
   padding: 0 8px;
 }
-#v18n_panel .translations .item.even {
+#v15n_panel .translations .item.even {
   background-color: #FFFFFF;
 }
 
-#v18n_panel .translations .item .key {
+#v15n_panel .translations .item .key {
   float: left;
   max-width: 200px;
 }
 
-#v18n_panel .custom-translations {
+#v15n_panel .custom-translations {
   padding: 8px;
   background: #F9E3D4;
   -moz-border-radius: 4px;
@@ -90,12 +104,12 @@
   box-shadow: 1px 1px 2px rgba(0,0,0,0.25);
 }
 
-#v18n_panel .custom-translations .ctranslations {
+#v15n_panel .custom-translations .ctranslations {
   background: #FDF6F0;
   max-height:100px;
   overflow: auto;
 }
 
-#v18n_panel .custom-translations .ccontrol {
+#v15n_panel .custom-translations .ccontrol {
   
 }

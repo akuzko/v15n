@@ -1,5 +1,5 @@
-module V15n
-  class Controller < ApplicationController
+module V15n::Rails
+  class Controller < ActionController::Base
     before_filter :enabled?, :except => :enable
 
     def save
