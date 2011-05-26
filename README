@@ -1,13 +1,53 @@
 V15n
 ====
 
-Introduction goes here.
+V15n stands for "VisualTranslation". It's a I18n translation tool.
 
 
-Example
+How to
 =======
+1. Install the plugin:
+  `rails plugin install git://github.com/akuzko/v15n.git`
+  `rails generate v15n:install`
+  this will generate assets and v15n initializer
+2. Setup initializers/v15n.rb if needed
+3. Include `V15n::Rails::Helper` in all controllers (and cells if you use any) you want to be translated visually.
+   You can include this helper in ApplicationController for enabling v15n in all application.
+4. Add `v15n` to you routes
 
-Example goes here.
+
+Usage
+=======
+After enabling V15n, translation panel will be rendered on each page. Panel consists of:
+1. Header showing your current locale. This is panel's draggable handle if you have jQuery-UI included.
+2. Rendering options ('List' and 'Tree')
+3. Main block: all translations that have been rendered to page by `t` method.
+4. Custom Translations block. Sometimes, keys are generated dynamically, or for whatever reason not shown
+   currently on page, but can hypothetically appear on page. In this case developer should add such keys
+   in this block, and interpeter will be able to translate them wile viewing current page.
+
+After panel is rendered, hover cursor over translatable content, and v15n will focus on corresponding input
+field in panel. Note that all translatable string are rendered with special UTF-8 characters around them, which
+are used internally by v15n.
+
+When AJAX request is performed, v15n will accept new translations and reprocess page, as well as rerender
+panel's translations, so new keys and translations will appear there.
 
 
-Copyright (c) 2011 [name of plugin creator], released under the MIT license
+Notes
+=======
+1. V15n::Rails::Helper defines t method which itself calls I18n.t with last part of key as defaul value
+   if no default value is provided. For example, 'foo.bar.Hello World' will return 'Hello World' if no
+   translation is found in backend
+2. Client side of V15n uses jQuery for rendering and processing. Thus, you have to include one. If you also
+   have jQuery-UI included, V15n panel will be draggable, which is recommended.
+
+
+TODOs
+=======
+No tests for now :(
+Any advices on best pactices of testing such things are greatly wellcomed
+Any advices on 'how it actually should be done' are also greatly appreciated
+
+
+Copyright (c) 2011 Artem Kuzko, released under the MIT license

@@ -24,8 +24,8 @@ module V15n::Rails
     end
 
     def enable
-      session[:v15n_enabled] = true if params[:secret] == V15n.secret
-      redirect_to root_path
+      session[:v15n_enabled] = true if V15n.authenticate self
+      redirect_to root_path unless response_body
     end
 
     def disable

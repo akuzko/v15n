@@ -3,9 +3,7 @@ module V15n::Rails
     def self.filter controller
       V15n.disable!
       return yield if V15n.disabled_in?(controller) || controller.instance_of?(V15n::Rails::Controller)
-      V15n.process controller do
-        yield
-      end
+      V15n.process(controller){ yield }
     end
   end
 end

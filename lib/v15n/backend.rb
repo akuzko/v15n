@@ -6,7 +6,7 @@ module V15n
     end
 
     def custom_translations page
-      @redis.smembers(page).inject({}){ |res, key| res[key] = @redis[key] || ''; res }
+      @redis.smembers(page).inject({}){ |res, key| res[key] = lookup(I18n.locale, key) || ''; res }
     end
 
     delegate :sadd, :srem, :to => :redis
@@ -14,7 +14,7 @@ module V15n
     private
 
     def redis
-      @redis ||= Redis.new(:db => 9)
+      @redis ||= Redis.new(:db => V15n.redis_db)
     end
   end
 end

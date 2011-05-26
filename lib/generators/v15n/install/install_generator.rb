@@ -13,6 +13,11 @@ module V15n
         copy_file "v15n_save.png", "public/images/v15n_save.png"
         copy_file "v15n_delete.png", "public/images/v15n_delete.png"
       end
+
+      def copy_initializer
+        say_status "generating", "v15n initializer", :green
+        template "../templates/v15n.rb", "config/initializers/v15n.rb"
+      end
     end
   end
 end

@@ -3,7 +3,7 @@ module V15n::Rails
     extend ActiveSupport::Concern
     included do
       helper_method :t
-      around_filter V15n::Rails::Filter
+      around_filter V15n::Rails::Filter if respond_to? :around_filter
     end
 
     def t key, options = {}

@@ -10,6 +10,10 @@ module V15n::Rails
       !controller.session[:v15n_enabled]
     end
 
+    def authenticate controller
+      @authenticator[controller]
+    end
+
     private
 
     def preprocess controller
@@ -51,16 +55,24 @@ module V15n::Rails
     def append_xhr controller
       if [:html, :js].include? controller.request.format.symbol
         js = <<-JS.html_safe
-          if(typeof v15n != 'indefined') {
+          ;if(typeof v15n != 'indefined') {
             v15n.addKeys(#{@keys.to_json});
             v15n.addValues(#{@values.to_json});
             v15n.process();
             v15n.panel.renderTranslations();
-          }
+          };
         JS
         js = controller.view_context.javascript_tag{ js } if controller.request.format == :html
         controller.response.body += js
+      elsif controller.request.format.symbol == :json
+        append_json controller
       end
+    end
+
+    def append_json controller
+      json = {:keys => @keys, :values => @values}.to_json
+      controller.response.body = controller.response.body.gsub /()(?=\}$)/m, ",\"v15n\":#{json}"
+      #controller.response.body = "(#{json},#{controller.response.body})"
     end
   end
 end
