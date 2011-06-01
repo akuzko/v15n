@@ -75,6 +75,7 @@ module V15n
         controller.authenticate_or_request_with_http_basic do |username, password|
           username == @username && password == @password
         end
+        controller.warden.custom_failure! if controller.respond_to?(:warden) && controller.response_body
       }
     end
   end
