@@ -103,7 +103,7 @@ _isString = (obj) -> !!(obj is '' or (obj and obj.charCodeAt and obj.substr))
       @body = $('<div id="v15n_panel"/>').appendTo('body')
       @body.append v15n.panel.html
       $('.locale', @body).html(v15n.locale)
-      $('.menu input', @body).click ->
+      $('.v15n_menu input', @body).click ->
         v15n.panel.renderingMethod = $(this).val()
         v15n.panel.renderTranslations()
       $('.ccontrol a:first', @body).click =>
@@ -116,7 +116,7 @@ _isString = (obj) -> !!(obj is '' or (obj and obj.charCodeAt and obj.substr))
         v15n.addCustom $('.ccontrol input', @body).val()
       @renderTranslations()
       @loadCustom()
-      @body.draggable handle: '.menu>h5' if $.fn.draggable
+      @body.draggable handle: '.v15n_menu>h5' if $.fn.draggable
       @body
     renderTranslations: ->
       $('.translations', @body).children().remove()
@@ -210,7 +210,7 @@ $("[v15n_key]").live
       focusTimeout = no
 
 @v15n.panel.html = '''
-  <div class="menu">
+  <div class="v15n_menu">
     <h5>Current Locale: <span class="locale">?</span></h5>
     <div class="control">
       <span>View as:</span>
