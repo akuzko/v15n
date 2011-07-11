@@ -64,7 +64,7 @@ _isString = (obj) -> !!(obj is '' or (obj and obj.charCodeAt and obj.substr))
       return true
     forPropertiesOf: (elem, iterator) ->
       properties = (@property node for node in elem.childNodes when node.nodeType is Node.TEXT_NODE and @test node.data)
-      properties.concat (@property attr for attr in elem.attributes when @test attr.nodeValue)
+      properties = properties.concat (@property attr for attr in elem.attributes when @test attr.nodeValue)
       iterator.call this, elem, prop for prop in properties
       return elem
     property: (obj) ->
